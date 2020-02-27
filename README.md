@@ -1,3 +1,3 @@
-# mirai-japt
+# mirai-demos
 
-Mirai 的 Java API
+Mirai 的使用教学
