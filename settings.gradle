@@ -1,0 +1,41 @@
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.id) {
+                case "org.jetbrains.kotlin.multiplatform": useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}"); break
+                case "com.android.library": useModule("com.android.tools.build:gradle:${requested.version}"); break
+                case "com.jfrog.bintray": useModule("com.jfrog.bintray.gradle:gradle-bintray-plugin:${requested.version}")
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        google()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+    }
+}
+
+rootProject.name = 'mirai-demos'
+
+include(':mirai-demo-java')
+include(':mirai-demo-kotlin')
+
+try {
+    def keyProps = new Properties()
+    def keyFile = file("local.properties")
+    if (keyFile.exists()) keyFile.withInputStream { keyProps.load(it) }
+    if (!keyProps.getProperty("sdk.dir", "").isEmpty()) {
+        include(':mirai-demo-android')
+    } else {
+        println("Android SDK 可能未安装. \n将不会加载模块 `mirai-demo-android`, 但这并不影响其他 demo 的加载 ")
+        println("Android SDK might not be installed. \nModule `mirai-demo-android` will not be included, but other demos will not be influenced")
+    }
+} catch (Exception e) {
+    e.printStackTrace()
+}
+
+enableFeaturePreview('GRADLE_METADATA')
