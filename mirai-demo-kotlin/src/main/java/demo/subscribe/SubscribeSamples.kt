@@ -12,6 +12,7 @@
 package demo.subscribe
 
 import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.BotAccount
 import net.mamoe.mirai.alsoLogin
@@ -196,6 +197,14 @@ fun Bot.messageDSL() {
             // it: String (来自 MessageChain.toString)
             reply("B")
         }
+    }
+
+    launch {
+        // channel 风格
+        for (message in this@messageDSL.incoming<FriendMessage>()) {
+            println(message)
+        }
+        // 这个 for 循环不会结束.
     }
 
     subscribeGroupMessages {
