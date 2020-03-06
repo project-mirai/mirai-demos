@@ -20,8 +20,6 @@ import android.os.IBinder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.io.core.IoBuffer
-import kotlinx.io.core.readBytes
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeMessages
 import net.mamoe.mirai.qqandroid.QQAndroid
@@ -54,9 +52,8 @@ class MiraiService : Service() {
         GlobalScope.launch {
             mBot = QQAndroid.Bot(context, qq, pwd) {
                 loginSolver = object : LoginSolver() {
-                    override suspend fun onSolvePicCaptcha(bot: Bot, data: IoBuffer): String? {
-                        val bytes = data.readBytes()
-                        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    override suspend fun onSolvePicCaptcha(bot: Bot, data: ByteArray): String? {
+                        val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
                         mCaptchaDeferred = CompletableDeferred()
                         mCallback?.get()?.onCaptcha(bitmap)
                         return mCaptchaDeferred.await()
