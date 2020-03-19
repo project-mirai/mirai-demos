@@ -112,7 +112,7 @@ fun Bot.messageDSL() {
             reply(message)
         }
 
-        "hello.*world".toRegex() matchingReply {
+        Regex("hello.*world") matchingReply {
             "Hello!"
         }
 

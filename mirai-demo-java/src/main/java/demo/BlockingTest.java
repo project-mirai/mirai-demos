@@ -58,7 +58,7 @@ class BlockingTest {
             } else if (event.getMessage().contains("mixed")) {
                 // 复合消息, 通过 .plus 连接两个消息
                 event.getGroup().sendMessage(
-                        Image.fromId("{01E9451B-70ED-EAE3-B37C-101F1EEBF5B5}.png") // 演示图片, 可能已过期
+                        MessageUtils.newImage("{01E9451B-70ED-EAE3-B37C-101F1EEBF5B5}.png") // 演示图片, 可能已过期
                                 .plus("Hello") // 文本消息
                                 .plus(new At(event.getSender())) // at 群成员
                                 .plus(AtAll.INSTANCE) // at 全体成员
@@ -80,7 +80,7 @@ class BlockingTest {
                     // 上传一个图片并得到 Image 类型的 Message
 
                     final String imageId = image.getImageId(); // 可以拿到 ID
-                    final Image fromId = Image.fromId(imageId); // ID 转换得到 Image
+                    final Image fromId = MessageUtils.newImage(imageId); // ID 转换得到 Image
 
                     event.getGroup().sendMessage(image); // 发送图片
                 }
