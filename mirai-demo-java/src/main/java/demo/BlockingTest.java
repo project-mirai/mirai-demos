@@ -86,7 +86,7 @@ class BlockingTest {
                 }
 
             } else if (event.getMessage().contains("friend")) {
-                final Future<MessageReceipt<Contact>> future = event.getSender().sendMessageAsync("Async send"); // 异步发送
+                final Future<MessageReceipt<? extends Contact>> future = event.getSender().sendMessageAsync("Async send"); // 异步发送
                 try {
                     future.get();
                 } catch (InterruptedException | ExecutionException e) {
