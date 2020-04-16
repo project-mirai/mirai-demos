@@ -42,6 +42,7 @@ class BlockingTest {
 
         Events.subscribeAlways(GroupMessage.class, (GroupMessage event) -> {
 
+
             if (toString(event.getMessage()).contains("reply")) {
                 // 引用回复
                 final QuoteReply quote = MessageUtils.quote(event.getMessage());
@@ -92,6 +93,19 @@ class BlockingTest {
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
+                //将图片转换为图片ID
+            } else if (toString(event.getMessage()).startsWith("convert")) {
+                StringBuilder stringBuilder = new StringBuilder("结果：\n");
+                event.getMessage().forEachContent(msg ->
+                        {
+                            if (msg instanceof Image) {
+                                stringBuilder.append(((Image) msg).getImageId());
+                                stringBuilder.append("\n");
+                            }
+                            return Unit.INSTANCE;// kotlin 的所有函数都有返回值. Unit 为最基本的返回值. 请在这里永远返回 Unit
+                        }
+                );
+                event.getGroup().sendMessage(stringBuilder.toString());
             }
         });
 
@@ -99,18 +113,6 @@ class BlockingTest {
     }
 
     private static String toString(MessageChain chain) {
-        return toString(chain, false);
-    }
-
-    private static String toString(MessageChain chain, boolean miraiID) {
-        if (!miraiID) {
-            return chain.contentToString();
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        chain.forEachContent((x) -> {
-            stringBuilder.append(x.toString());
-            return Unit.INSTANCE;// kotlin 的所有函数都有返回值. Unit 为最基本的返回值. 请在这里永远返回 Unit
-        });
-        return stringBuilder.toString();
+        return chain.contentToString();
     }
 }
