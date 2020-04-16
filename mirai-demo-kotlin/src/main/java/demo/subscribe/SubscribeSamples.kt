@@ -14,36 +14,16 @@ package demo.subscribe
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
-import net.mamoe.mirai.BotAccount
 import net.mamoe.mirai.alsoLogin
 import net.mamoe.mirai.contact.QQ
 import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.contact.sendMessage
 import net.mamoe.mirai.event.*
-import net.mamoe.mirai.message.FriendMessage
-import net.mamoe.mirai.message.GroupMessage
+import net.mamoe.mirai.join
+import net.mamoe.mirai.message.*
 import net.mamoe.mirai.message.data.*
-import net.mamoe.mirai.message.nextMessage
-import net.mamoe.mirai.message.sendAsImageTo
-import net.mamoe.mirai.utils.FileBasedDeviceInfo
-import net.mamoe.mirai.utils.MiraiInternalAPI
 import java.io.File
 
-@MiraiInternalAPI
-private fun readTestAccount(): BotAccount? {
-    val file = File("testAccount.txt")
-    if (!file.exists() || !file.canRead()) {
-        return null
-    }
-
-    println("Reading account from testAccount.text")
-    val lines = file.readLines()
-    return try {
-        BotAccount(lines[0].toLong(), lines[1])
-    } catch (e: IndexOutOfBoundsException) {
-        null
-    }
-}
 
 @Suppress("UNUSED_VARIABLE")
 suspend fun main() {
@@ -52,7 +32,7 @@ suspend fun main() {
         "123456"
     ) {
         // 覆盖默认的配置
-        +FileBasedDeviceInfo // 使用 "device.json" 保存设备信息
+        fileBasedDeviceInfo("device.json") // 使用 "device.json" 保存设备信息
         // networkLoggerSupplier = { SilentLogger } // 禁用网络层输出
     }.alsoLogin()
 
@@ -160,12 +140,6 @@ fun Bot.messageDSL() {
         }
 
 
-        // 自定义的 filter, filter 中 it 为转为 String 的消息.
-        // 也可以用任何能在处理时使用的变量, 如 subject, sender, message
-        content({ it.length == 3 }) {
-            reply("你发送了长度为 3 的消息")
-        }
-
 
         case("上传好友图片") {
             val filename = it.substringAfter("上传好友图片")
@@ -263,17 +237,17 @@ suspend fun directlySubscribe(bot: Bot) {
         // 获取第一个纯文本消息, 获取不到会抛出 NoSuchElementException
         // val firstText = message.first<PlainText>()
 
-        val firstText = message.firstOrNull<PlainText>()
+        val firstText = message.firstOrNull(PlainText)
 
         // 获取第一个图片
-        val firstImage = message.firstOrNull<Image>()
+        val firstImage = message.firstOrNull(Image)
 
         when {
-            message eq "你好" -> reply("你好!")
+            message.contentToString() == "你好" -> reply("你好!")
 
-            "复读" in message -> sender.sendMessage(message)
+            "复读" in message.contentToString() -> sender.sendMessage(message)
 
-            "发群消息" in message -> {
+            "发群消息" in message.contentToString() -> {
                 bot.getGroup(580266363).sendMessage(message.toString().substringAfter("发群消息"))
             }
         }

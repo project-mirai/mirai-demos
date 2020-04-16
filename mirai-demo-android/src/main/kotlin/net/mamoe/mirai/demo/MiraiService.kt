@@ -50,7 +50,7 @@ class MiraiService : Service() {
 
     private fun login(context: Context, qq: Long, pwd: String) {
         GlobalScope.launch {
-            mBot = QQAndroid.Bot(context, qq, pwd) {
+            mBot = QQAndroid.Bot(context as net.mamoe.mirai.utils.Context, qq, pwd) {
                 loginSolver = object : LoginSolver() {
                     override suspend fun onSolvePicCaptcha(bot: Bot, data: ByteArray): String? {
                         val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
