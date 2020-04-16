@@ -99,6 +99,13 @@ class BlockingTest {
     }
 
     private static String toString(MessageChain chain) {
+        return toString(chain, false);
+    }
+
+    private static String toString(MessageChain chain, boolean miraiID) {
+        if (!miraiID) {
+            return chain.contentToString();
+        }
         StringBuilder stringBuilder = new StringBuilder();
         chain.forEachContent((x) -> {
             stringBuilder.append(x.toString());
