@@ -15,9 +15,10 @@ import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.launch
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.alsoLogin
-import net.mamoe.mirai.contact.QQ
+import net.mamoe.mirai.contact.Friend
+import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.isOperator
-import net.mamoe.mirai.contact.sendMessage
 import net.mamoe.mirai.event.*
 import net.mamoe.mirai.join
 import net.mamoe.mirai.message.*
@@ -48,6 +49,7 @@ suspend fun main() {
  * @see subscribeFriendMessages
  * @see subscribeMessages
  * @see subscribeGroupMessages
+ * @see subscribeTempMessages
  *
  * @see MessageSubscribersBuilder
  */
@@ -59,10 +61,16 @@ fun Bot.messageDSL() {
 
         // 当消息 == "查看 subject" 时, 执行 lambda
         case("查看 subject") {
-            if (subject is QQ) {
-                reply("消息主体为 QQ, 你在发私聊消息")
-            } else {
-                reply("消息主体为 Group, 你在群里发消息")
+            when (subject) {
+                is Friend -> {
+                    reply("消息主体为 Friend，你在发私聊消息")
+                }
+                is Group -> {
+                    reply("消息主体为 Group，你在群里发消息")
+                }
+                is Member -> {
+                    reply("消息主体为 Member，你在发临时消息")
+                }
             }
 
             // 在回复的时候, 一般使用 subject 来作为回复对象.
@@ -196,7 +204,7 @@ fun Bot.messageDSL() {
             // 挂起当前协程, 等待下一条满足条件的消息.
             // 发送 "禁言" 后需要再发送一条消息 at 一个人.
             val value: At = nextMessage { message.any(At) }[At]
-            value.member().mute(10)
+            value.asMember().mute(10)
         }
 
         startsWith("群名=") {
