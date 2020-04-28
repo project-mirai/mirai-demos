@@ -70,7 +70,7 @@ class BlockingTest {
                 // 发送消息马上就撤回. 因速度太快, 客户端将看不到这个消息.
 
             } else if (toString(event.getMessage()).contains("recall2")) {
-                final Job job = event.getGroup().sendMessage("3秒后撤回").recall(3000);
+                final Job job = event.getGroup().sendMessage("3秒后撤回").recallIn(3000);
 
                 job.cancel(new CancellationException()); // 可取消这个任务
 
