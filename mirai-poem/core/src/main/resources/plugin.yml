@@ -1,0 +1,6 @@
+name: "mirai-poem-core"
+author: "pt"
+version: "1.2"
+main: "com.github.plexpt.miraipoem.MyPluginBase"
+info: "AI作诗"
+depends: []

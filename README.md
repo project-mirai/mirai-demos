@@ -18,6 +18,16 @@ Mirai 是一个在全平台下运行，提供 QQ Android 和 TIM PC 协议支持
 </div>
 # mirai-demos
 
-Mirai 的使用教学
+## Mirai 的使用教学
+
+## 实例
+
+### [Java-gradle 实例](https://github.com/mamoe/mirai-demos/tree/master/mirai-demo-java)
+
+### [kotlin-gradle 实例](https://github.com/mamoe/mirai-demos/tree/master/mirai-demo-kotlin) 
+
+### [Poem插件](https://github.com/mamoe/mirai-demos/tree/master/mirai-poem) ：（Java-maven）
+
+
 
 待补充说明...

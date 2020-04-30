@@ -1,0 +1,6 @@
+name: "mirai-poem-lick"
+author: "pt"
+version: "1.2"
+main: "com.github.plexpt.miraipoem.lick.MyPluginBase"
+info: "彩虹屁"
+depends: ["mirai-poem-core"]
