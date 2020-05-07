@@ -89,7 +89,7 @@ fun Bot.messageDSL() {
 
 
             // message[Image].download() // 还未支持 download
-            if (this is GroupMessage) {
+            if (this is GroupMessageEvent) {
                 //如果是群消息
                 // group: Group
                 this.group.sendMessage("你在一个群里")
@@ -183,7 +183,7 @@ fun Bot.messageDSL() {
 
     launch {
         // channel 风格
-        for (message in this@messageDSL.incoming<FriendMessage>()) {
+        for (message in this@messageDSL.incoming<FriendMessageEvent>()) {
             println(message)
         }
         // 这个 for 循环不会结束.
@@ -203,8 +203,8 @@ fun Bot.messageDSL() {
         case("禁言") {
             // 挂起当前协程, 等待下一条满足条件的消息.
             // 发送 "禁言" 后需要再发送一条消息 at 一个人.
-            val value: At = nextMessage { message.any(At) }[At]
-            value.asMember().mute(10)
+            val value: At? = nextMessage { message.any(At) }[At]
+            value?.asMember()?.mute(10)
         }
 
         startsWith("群名=") {
@@ -238,7 +238,7 @@ suspend fun directlySubscribe(bot: Bot) {
     // 则这个 `runBlocking` 永远不会结束, 因为 `subscribeAlways` 在 `runBlocking` 的 `CoroutineScope` 下创建了一个 Job.
     // 正确的用法为:
     // 在 Bot 的 CoroutineScope 下创建一个监听事件的 Job, 则这个子 Job 会在 Bot 离线后自动完成 (complete).
-    bot.subscribeAlways<FriendMessage> {
+    bot.subscribeAlways<FriendMessageEvent> {
         // this: FriendMessageEvent
         // event: FriendMessageEvent
 
