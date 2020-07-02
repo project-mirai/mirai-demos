@@ -1,6 +1,7 @@
 package demo;
 
 import kotlin.Unit;
+import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.Job;
 import kotlinx.serialization.json.Json;
 import kotlinx.serialization.json.JsonConfiguration;
@@ -10,13 +11,14 @@ import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.Events;
-import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.ListeningStatus;
+import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.BotConfiguration;
 import net.mamoe.mirai.utils.SystemDeviceInfoKt;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.concurrent.CancellationException;
@@ -46,7 +48,7 @@ class BlockingTest {
 
         //输出好友
         bot.getFriends().forEach(friend -> System.out.println(friend.getId() + ":" + friend.getNick()));
-        Events.registerEvents(bot, new ListenerHost() {
+        Events.registerEvents(bot, new SimpleListenerHost() {
             //EventHandler可以指定多个属性，包括处理方式、优先级、是否忽略已取消的事件
             //其默认值请见EventHandler注解类
             //因为默认处理的类型为Listener.ConcurrencyKind.CONCURRENT
@@ -125,6 +127,12 @@ class BlockingTest {
                 }
                 //保持监听
                 return ListeningStatus.LISTENING;
+            }
+
+            //处理在处理事件中发生的未捕获异常
+            @Override
+            public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
+                throw new RuntimeException("在事件处理中发生异常", exception);
             }
         });
 
