@@ -3,9 +3,6 @@ package demo;
 import kotlin.Unit;
 import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.Job;
-import kotlinx.serialization.json.Json;
-import kotlinx.serialization.json.JsonConfiguration;
-import kotlinx.serialization.modules.EmptyModule;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.contact.Contact;
@@ -17,7 +14,6 @@ import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.BotConfiguration;
-import net.mamoe.mirai.utils.SystemDeviceInfoKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,10 +27,9 @@ class BlockingTest {
         // 使用自定义的配置
         final Bot bot = BotFactoryJvm.newBot(123, "", new BotConfiguration() {
             {
+
                 //保存设备信息到文件
-                setDeviceInfo(context ->
-                        SystemDeviceInfoKt.loadAsDeviceInfo(new File("deviceInfo.json"), new Json(JsonConfiguration.getDefault(), EmptyModule.INSTANCE), context)
-                );
+                fileBasedDeviceInfo("deviceInfo.json");
                 // setLoginSolver();
                 // setBotLoggerSupplier();
             }
