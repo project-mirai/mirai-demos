@@ -2,6 +2,9 @@ package demo;
 
 import kotlin.Unit;
 import kotlinx.coroutines.Job;
+import kotlinx.serialization.json.Json;
+import kotlinx.serialization.json.JsonConfiguration;
+import kotlinx.serialization.modules.EmptyModule;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.contact.Contact;
@@ -27,7 +30,7 @@ class BlockingTest {
             {
                 //保存设备信息到文件
                 setDeviceInfo(context ->
-                        SystemDeviceInfoKt.loadAsDeviceInfo(new File("deviceInfo.json"), context)
+                        SystemDeviceInfoKt.loadAsDeviceInfo(new File("deviceInfo.json"), new Json(JsonConfiguration.getDefault(), EmptyModule.INSTANCE), context)
                 );
                 // setLoginSolver();
                 // setBotLoggerSupplier();
