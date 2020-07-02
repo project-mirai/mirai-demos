@@ -1,18 +1,20 @@
 package demo;
 
 import kotlin.Unit;
+import kotlin.coroutines.CoroutineContext;
 import kotlinx.coroutines.Job;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactoryJvm;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.Events;
-import net.mamoe.mirai.event.ListenerHost;
+import net.mamoe.mirai.event.ListeningStatus;
+import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.BotConfiguration;
-import net.mamoe.mirai.utils.SystemDeviceInfoKt;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.concurrent.CancellationException;
@@ -25,10 +27,9 @@ class BlockingTest {
         // 使用自定义的配置
         final Bot bot = BotFactoryJvm.newBot(123, "", new BotConfiguration() {
             {
+
                 //保存设备信息到文件
-                setDeviceInfo(context ->
-                        SystemDeviceInfoKt.loadAsDeviceInfo(new File("deviceInfo.json"), context)
-                );
+                fileBasedDeviceInfo("deviceInfo.json");
                 // setLoginSolver();
                 // setBotLoggerSupplier();
             }
@@ -42,13 +43,13 @@ class BlockingTest {
 
         //输出好友
         bot.getFriends().forEach(friend -> System.out.println(friend.getId() + ":" + friend.getNick()));
-        Events.registerEvents(bot, new ListenerHost() {
+        Events.registerEvents(bot, new SimpleListenerHost() {
             //EventHandler可以指定多个属性，包括处理方式、优先级、是否忽略已取消的事件
             //其默认值请见EventHandler注解类
             //因为默认处理的类型为Listener.ConcurrencyKind.CONCURRENT
             //需要考虑并发安全
             @EventHandler
-            public void onGroupMessage(GroupMessageEvent event) {
+            public ListeningStatus onGroupMessage(GroupMessageEvent event) {
                 String msgString = BlockingTest.toString(event.getMessage());
                 if (msgString.contains("reply")) {
                     // 引用回复
@@ -119,6 +120,14 @@ class BlockingTest {
                     //全体禁言
                     event.getGroup().getSettings().setMuteAll(true);
                 }
+                //保持监听
+                return ListeningStatus.LISTENING;
+            }
+
+            //处理在处理事件中发生的未捕获异常
+            @Override
+            public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
+                throw new RuntimeException("在事件处理中发生异常", exception);
             }
         });
 
