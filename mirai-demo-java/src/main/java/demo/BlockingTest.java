@@ -11,6 +11,7 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.Events;
 import net.mamoe.mirai.event.ListenerHost;
+import net.mamoe.mirai.event.ListeningStatus;
 import net.mamoe.mirai.message.GroupMessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
 import net.mamoe.mirai.message.data.*;
@@ -51,7 +52,7 @@ class BlockingTest {
             //因为默认处理的类型为Listener.ConcurrencyKind.CONCURRENT
             //需要考虑并发安全
             @EventHandler
-            public void onGroupMessage(GroupMessageEvent event) {
+            public ListeningStatus onGroupMessage(GroupMessageEvent event) {
                 String msgString = BlockingTest.toString(event.getMessage());
                 if (msgString.contains("reply")) {
                     // 引用回复
@@ -122,6 +123,8 @@ class BlockingTest {
                     //全体禁言
                     event.getGroup().getSettings().setMuteAll(true);
                 }
+                //保持监听
+                return ListeningStatus.LISTENING;
             }
         });
 
