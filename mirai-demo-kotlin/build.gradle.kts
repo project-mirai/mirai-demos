@@ -13,5 +13,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("demo.subscribe.SubscribeSamplesKt")
+    mainClassName = "demo.subscribe.SubscribeSamplesKt"
 }
